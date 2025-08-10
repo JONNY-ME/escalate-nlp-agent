@@ -1,0 +1,13 @@
+pandas
+numpy
+matplotlib
+nltk
+spacy
+scikit-learn
+sumy
+rouge-score
+transformers
+torch
+tqdm
+rich
+pyyaml 

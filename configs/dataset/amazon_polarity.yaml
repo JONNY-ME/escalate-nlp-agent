@@ -1,0 +1,36 @@
+name: Amazon Polarity (HF)
+id: amazon_polarity
+loader:
+  type: parquet
+  params: {}
+raw:
+  paths:
+    - data/raw/amazon_polarity/train.parquet
+    - data/raw/amazon_polarity/test.parquet
+fields:
+  id: id
+  split: split
+  title: title
+  text: text       
+  meta: meta      
+splits:
+  infer_from: split
+preprocess:
+  lowercase: true
+  normalize_unicode: true
+  min_tokens: 10
+  drop_duplicates: true
+  token_pattern: "[a-zA-Z]+(?:'[a-z]+)?"
+  stopwords:
+    base: english
+    extra: []     
+eda:
+  top_terms_n: 30
+  ner:
+    enabled: true
+    limit: 2000
+    labels: ["PERSON","ORG","GPE","DATE"]
+outputs:
+  interim: data/interim/amazon_polarity/preprocessed.parquet
+  processed_dir: data/processed/amazon_polarity
+  figures_dir: reports/figures

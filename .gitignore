@@ -1,0 +1,55 @@
+# --- Python ---
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.pkl
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+.eggs/
+
+# --- Virtual environments ---
+.venv/
+env/
+venv/
+ENV/
+env.bak/
+
+# --- Jupyter ---
+.ipynb_checkpoints/
+*.nbconvert/
+*.nbconvert.ipynb
+
+# --- Data & Models ---
+data/raw/
+data/interim/
+data/processed/
+models/
+reports/figures/
+reports/agent/demo_output.json
+
+# --- Logs ---
+*.log
+logs/
+*.out
+*.err
+
+# --- OS / Editor ---
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# --- Environment / Config ---
+*.env
+.env.*
+secrets.json
+token.json
+
+# --- Compiled notebooks ---
+notebooks/*-checkpoint.ipynb

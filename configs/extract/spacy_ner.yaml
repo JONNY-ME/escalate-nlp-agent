@@ -1,0 +1,5 @@
+name: spaCy NER Extraction
+model: en_core_web_sm
+labels: ["PERSON", "ORG", "GPE", "DATE", "MONEY", "PERCENT"]
+outputs:
+  file: data/processed/{dataset}/extractions_spacy_ner.parquet

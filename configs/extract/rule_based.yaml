@@ -1,0 +1,8 @@
+name: Rule-based Extraction
+patterns:
+  dates: '\b\d{1,2}[/-]\d{1,2}[/-]\d{2,4}\b'
+  numbers: '\b\d+(?:\.\d+)?\b'
+  emails: '[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}'
+  urls: 'https?://[^\s]+'
+outputs:
+  file: data/processed/{dataset}/extractions_rule_based.parquet

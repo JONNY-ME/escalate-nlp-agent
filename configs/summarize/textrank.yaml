@@ -1,0 +1,5 @@
+name: TextRank Summarization
+type: extractive
+sentences: 3
+outputs:
+  file: data/processed/{dataset}/summaries_textrank.parquet

@@ -1,0 +1,20 @@
+name: News QA Agent
+dataset_id: reuters                    # must match ds_cfg["id"]
+retriever:
+  type: tfidf
+  top_k: 5
+  ngram_range: [1, 2]
+  max_features: 50000
+summarizer:
+  type: extractive                     # extractive|abstractive
+  config: configs/summarize/textrank.yaml
+extractors:
+  - configs/extract/rule_based.yaml
+  - configs/extract/spacy_ner.yaml
+reasoning:
+  answer_sentences: 4                  # how many sentences to synthesize
+memory:
+  enabled: true
+  file: data/agent_memory.jsonl
+outputs:
+  demo_json: reports/agent/demo_output.json

@@ -1,0 +1,7 @@
+name: BART Summarization
+type: abstractive
+model: facebook/bart-large-cnn
+max_input_tokens: 512
+max_output_tokens: 100
+outputs:
+  file: data/processed/{dataset}/summaries_bart.parquet

@@ -1,0 +1,179 @@
+\documentclass[12pt,a4paper]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{amsmath}
+\usepackage{enumitem}
+\usepackage{booktabs}
+\usepackage{fancyhdr}
+\usepackage{xcolor}
+\usepackage{listings}
+\lstset{
+  basicstyle=\ttfamily\small,
+  breaklines=true,
+  backgroundcolor=\color{gray!10},
+  frame=single
+}
+
+\pagestyle{fancy}
+\fancyhf{}
+\rhead{Eskalate NLP Agent}
+\lhead{Agent Workflow Report}
+\rfoot{\thepage}
+
+\begin{document}
+
+% --------------------------
+% TITLE PAGE
+% --------------------------
+\begin{center}
+\vspace*{2cm}
+{\LARGE \textbf{Eskalate NLP Agent: End-to-End Information Extraction and Summarization}}\\[0.5cm]
+{\large Detailed Workflow and Demonstration Report}\\[2cm]
+\textbf{Date:} \today\\[1cm]
+\textbf{Author:} Yohannes Melese
+\vfill
+\end{center}
+\newpage
+
+% --------------------------
+\section{Introduction}
+This report documents the design, configuration, and demonstration of the \textbf{Eskalate NLP Agent}, a modular natural language processing (NLP) system designed for information retrieval, named entity extraction, and summarization. The goal is to handle diverse document corpora and provide concise answers to user queries with supporting evidence.
+
+The agent integrates:
+\begin{itemize}[noitemsep]
+  \item \textbf{Retrieval:} TF-IDF keyword-based ranking of documents.
+  \item \textbf{Extraction:} Rule-based pattern matching and spaCy NER.
+  \item \textbf{Summarization:} Extractive (TextRank) and optional abstractive (BART) summarization.
+  \item \textbf{Synthesis:} Merging retrieved snippets and extractions into a coherent answer.
+\end{itemize}
+
+% --------------------------
+\section{System Architecture}
+The system follows a configurable pipeline:
+\begin{enumerate}[noitemsep]
+  \item Load dataset and configurations from YAML files.
+  \item Preprocess text: lowercasing, Unicode normalization, stopword removal.
+  \item Conduct exploratory data analysis (EDA) to verify corpus characteristics.
+  \item Run retrieval on incoming queries.
+  \item Apply extractors to retrieved documents.
+  \item Summarize the subset of documents.
+  \item Synthesize and output final answers with supporting evidence.
+\end{enumerate}
+
+\noindent Figure~\ref{fig:pipeline} shows the pipeline overview.
+
+\begin{figure}[h]
+\centering
+\fbox{\includegraphics[width=0.9\textwidth]{figures/agent_diagram_placeholder.png}}
+\caption{High-level architecture of the Eskalate NLP Agent.}
+\label{fig:pipeline}
+\end{figure}
+
+% --------------------------
+\section{Datasets}
+Two datasets are integrated into the agent for demonstration and testing.
+
+\subsection{NLTK Reuters Corpus}
+\begin{itemize}[noitemsep]
+  \item \textbf{Source:} NLTK's built-in Reuters news dataset.
+  \item \textbf{Content:} 10,788 news documents across 90 topics.
+  \item \textbf{Fields:} ID, split (train/test), text, and topics.
+\end{itemize}
+
+\subsection{Amazon Polarity Dataset}
+\begin{itemize}[noitemsep]
+  \item \textbf{Source:} Hugging Face Datasets (\texttt{amazon\_polarity}).
+  \item \textbf{Content:} Millions of reviews with positive/negative polarity labels.
+  \item \textbf{Fields:} Title, content, sentiment label.
+\end{itemize}
+
+% --------------------------
+\section{Preprocessing and EDA}
+Preprocessing steps included:
+\begin{itemize}[noitemsep]
+  \item Lowercasing all text.
+  \item Removing punctuation and normalizing Unicode.
+  \item Tokenization using regex-based pattern matching.
+  \item Stopword removal with custom additions (e.g., ``reuters'', ``said'').
+\end{itemize}
+
+EDA revealed:
+\begin{itemize}[noitemsep]
+  \item Median document length: $\sim$120 tokens.
+  \item High frequency of named entities in finance and trade domains.
+\end{itemize}
+
+% --------------------------
+\section{Extraction Methods}
+\subsection{Rule-Based Extraction}
+Regex-based patterns capture:
+\begin{itemize}[noitemsep]
+  \item Dates (\texttt{\textbackslash bdd/dd/dddd\textbackslash b})
+  \item Numbers (\texttt{\textbackslash b[0-9]+(?:\textbackslash .[0-9]+)?\textbackslash b})
+  \item Emails and URLs.
+\end{itemize}
+
+\subsection{spaCy NER}
+Pre-trained \texttt{en\_core\_web\_sm} model detects \texttt{PERSON}, \texttt{ORG}, \texttt{GPE}, \texttt{DATE}, \texttt{MONEY}, \texttt{PERCENT} entities.
+
+% --------------------------
+\section{Summarization Methods}
+\subsection{Extractive: TextRank}
+Uses the \texttt{sumy} implementation of TextRank to select top-ranked sentences by graph centrality.
+
+\subsection{Abstractive (Optional)}
+Uses Hugging Face's BART or PEGASUS models for neural abstractive summarization.
+
+% --------------------------
+\section{Agent Demonstration}
+\subsection{Query}
+\begin{lstlisting}
+What did the company report about profits?
+\end{lstlisting}
+
+\subsection{Retrieved Documents}
+The retriever fetched the top $k=5$ most relevant documents containing terms such as ``profits'', ``reported'', ``earnings''.
+
+\subsection{Final Answer}
+\begin{lstlisting}
+craftmatic/contour <crcc> sees higher profits
+craftmatic/contour industries inc said it would
+report substantial profits for the first quarter
+of fiscal 1987 ending march 31. the company
+recorded net income of 732,000 dlrs, or 22 cts per
+share, on revenues of 10.2 mln dlrs.
+
+booker says 1987 starts well
+booker plc <bokl.l> said 1987 had started well and
+the group had the resources to invest in its
+growth business both organically and by
+acquisition. it was commenting on figures for 1986
+which showed pretax profits rising to 54.6 mln from
+46.5 mln previously.
+\end{lstlisting}
+
+\subsection{Interpretation}
+The agent correctly identified and summarized profit-related announcements from two separate companies:
+\begin{itemize}[noitemsep]
+  \item \textbf{Craftmatic/Contour Industries Inc:} Q1 1987 net income of \$732k, or \$0.22 per share.
+  \item \textbf{Booker PLC:} Pretax profits rose from \$46.5M to \$54.6M in 1986.
+\end{itemize}
+
+% --------------------------
+\section{Conclusion and Next Steps}
+The Eskalate NLP Agent successfully demonstrates:
+\begin{itemize}[noitemsep]
+  \item Modular design for retrieval, extraction, and summarization.
+  \item Clear evidence-supported answers to natural language queries.
+  \item Flexibility to swap datasets and models via YAML configs.
+\end{itemize}
+
+\noindent \textbf{Next steps:}
+\begin{itemize}[noitemsep]
+  \item Integrate abstractive summarization for more natural answers.
+  \item Enhance retriever with semantic search (e.g., SBERT embeddings).
+  \item Deploy as an interactive API for real-time querying.
+\end{itemize}
+
+\end{document}
